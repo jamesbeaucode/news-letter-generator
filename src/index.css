@@ -3,8 +3,6 @@
 @source "../index.html";
 @source "./**/*.{js,ts,jsx,tsx}";
 
-@import "./App.css";
-
 @import "tw-animate-css";
 
 @import "shadcn/tailwind.css";
@@ -231,11 +229,19 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
+  }
+
+  html,
+  body,
+  #root {
+    @apply h-full;
+  }
+
   body {
     @apply bg-background text-foreground;
-    }
+  }
+
   html {
     @apply font-mono;
-    }
+  }
 }

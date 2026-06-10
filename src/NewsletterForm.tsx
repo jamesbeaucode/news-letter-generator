@@ -1,3 +1,6 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useNewsLetterStore } from "./stores/newsLetterStore";
 
 type FieldProps = {
@@ -9,18 +12,16 @@ type FieldProps = {
 
 function Field({ label, value, onChange, multiline }: FieldProps) {
   return (
-    <label className="newsletter-field">
-      <span className="newsletter-field-label">{label}</span>
+    <label className="flex flex-col gap-1.5">
+      <span className="text-sm font-medium text-foreground">{label}</span>
       {multiline ? (
-        <textarea
-          className="newsletter-input newsletter-textarea"
+        <Textarea
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value)}
           rows={4}
         />
       ) : (
-        <input
-          className="newsletter-input"
+        <Input
           type="text"
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value)}
@@ -37,9 +38,11 @@ type SectionProps = {
 
 function FormSection({ title, children }: SectionProps) {
   return (
-    <fieldset className="newsletter-section">
-      <legend className="newsletter-section-title">{title}</legend>
-      {children}
+    <fieldset className="mb-4 rounded-lg border border-border bg-background px-5 py-4">
+      <legend className="px-1.5 text-lg font-medium text-foreground">
+        {title}
+      </legend>
+      <div className="flex flex-col gap-3">{children}</div>
     </fieldset>
   );
 }
@@ -53,7 +56,10 @@ function NewsletterForm() {
   const loadSampleData = useNewsLetterStore((state) => state.loadSampleData);
 
   return (
-    <form className="newsletter-form" onSubmit={(e) => e.preventDefault()}>
+    <form
+      className="mx-auto max-w-2xl text-left"
+      onSubmit={(e) => e.preventDefault()}
+    >
       <FormSection title="Hero">
         <Field
           label="Hero image URL"
@@ -210,10 +216,10 @@ function NewsletterForm() {
         />
       </FormSection>
 
-      <div className="newsletter-form-actions">
-        <button type="button" onClick={loadSampleData}>
+      <div className="mb-4 flex justify-center">
+        <Button type="button" variant="outline" onClick={loadSampleData}>
           Load sample data
-        </button>
+        </Button>
       </div>
     </form>
   );

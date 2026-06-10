@@ -1,6 +1,8 @@
 import Email from "../emails/email";
 import { render } from "react-email";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import NewsletterForm from "./NewsletterForm";
 import {
   hasPopulatedData,
@@ -60,28 +62,35 @@ function App() {
   };
 
   return (
-    <div className="app-shell">
-      <main className="app-container app-chrome">
-        <header className="app-header">
-          <h1>Email Newsletter Generator</h1>
+    <div className="flex h-full min-h-svh flex-col overflow-hidden bg-background text-foreground">
+      <main className="mx-auto flex min-h-0 w-full max-w-5xl flex-1 flex-col gap-6 overflow-hidden px-6 pb-[68px] pt-6">
+        <header className="max-h-[55%] shrink-0 overflow-y-auto text-center">
+          <h1 className="font-heading mb-8 text-4xl font-medium tracking-tight lg:text-5xl">
+            Email Newsletter Generator
+          </h1>
           <NewsletterForm />
         </header>
 
-        <section className="clipboard-panel">
-          <div className="clipboard-toolbar">
-            <h2>HTML Source</h2>
-            <div className="clipboard-actions">
-              <button type="button" onClick={copyHtml} disabled={!html}>
-                {copyStatus === "copied"
-                  ? "Copied!"
-                  : copyStatus === "error"
-                    ? "Copy failed"
-                    : "Copy"}
-              </button>
-            </div>
+        <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-border shadow-sm">
+          <div className="flex items-center justify-between gap-4 border-b border-border bg-muted px-4 py-3">
+            <h2 className="text-xl font-medium">HTML Source</h2>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="font-mono"
+              onClick={copyHtml}
+              disabled={!html}
+            >
+              {copyStatus === "copied"
+                ? "Copied!"
+                : copyStatus === "error"
+                  ? "Copy failed"
+                  : "Copy"}
+            </Button>
           </div>
-          <textarea
-            className="clipboard-textarea"
+          <Textarea
+            className="min-h-[200px] flex-1 resize-none rounded-none border-0 font-mono text-xs focus-visible:ring-0"
             value={html}
             onChange={(e) => setHtml(e.target.value)}
             placeholder="Generated newsletter HTML appears here."
@@ -92,26 +101,28 @@ function App() {
 
       {isPreviewOpen && html && (
         <div
-          className="preview-modal-overlay app-chrome"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-6"
           onClick={closePreview}
           role="presentation"
         >
           <div
-            className="preview-modal"
+            className="flex h-[min(90svh,900px)] w-[min(760px,100%)] flex-col overflow-hidden rounded-lg border border-border bg-background shadow-lg"
             role="dialog"
             aria-modal="true"
             aria-labelledby="preview-modal-title"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="preview-modal-header">
-              <h2 id="preview-modal-title">Email Preview</h2>
-              <button type="button" onClick={closePreview}>
+            <div className="flex shrink-0 items-center justify-between gap-4 border-b border-border bg-muted px-4 py-3">
+              <h2 id="preview-modal-title" className="text-xl font-medium">
+                Email Preview
+              </h2>
+              <Button type="button" variant="outline" onClick={closePreview}>
                 Close
-              </button>
+              </Button>
             </div>
-            <div className="preview-modal-body">
+            <div className="min-h-0 flex-1 overflow-hidden">
               <iframe
-                className="email-preview-frame"
+                className="block size-full min-h-[500px] border-0"
                 title="Email preview"
                 srcDoc={html}
                 sandbox=""
@@ -121,20 +132,28 @@ function App() {
         </div>
       )}
 
-      <footer className="app-footer app-chrome">
-        <div className="app-container">
-          <div className="app-actions">
-            <button type="button" onClick={generateHTML} disabled={!canGenerate}>
+      <footer className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background">
+        <div className="mx-auto w-full max-w-5xl px-6">
+          <div className="flex justify-center gap-2.5 py-3.5">
+            <Button
+              type="button"
+              onClick={generateHTML}
+              disabled={!canGenerate}
+            >
               Generate
-            </button>
+            </Button>
             {html && (
-              <button type="button" onClick={() => setIsPreviewOpen(true)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsPreviewOpen(true)}
+              >
                 Preview
-              </button>
+              </Button>
             )}
-            <button type="button" onClick={handleClear}>
+            <Button type="button" variant="destructive" onClick={handleClear}>
               Clear
-            </button>
+            </Button>
           </div>
         </div>
       </footer>
