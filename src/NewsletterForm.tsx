@@ -112,7 +112,7 @@ function NewsletterForm() {
         info={{
           description:
             "The hero is the top banner of the newsletter with a full-width image, headline, and subtitle.",
-          imageUrl: "/public/images/hero.png",
+          imageUrl: "/images/hero.png",
         }}
       >
         <Field
@@ -137,7 +137,7 @@ function NewsletterForm() {
         info={{
           description:
             "The main article is the primary featured story block shown directly below the hero.",
-          imageUrl: "/public/images/main-desc.png",
+          imageUrl: "/images/main-desc.png",
         }}
       >
         <Field
@@ -165,7 +165,7 @@ function NewsletterForm() {
         info={{
           description:
             "Spotlight highlights a single featured item with an image, title, description, and link.",
-          imageUrl: "/public/images/spotlight.png",
+          imageUrl: "/images/spotlight.png",
         }}
       >
         <Field
@@ -196,7 +196,7 @@ function NewsletterForm() {
         info={{
           description:
             "The blog section features a main post with image and a smaller sub-blog teaser below it.",
-          imageUrl: "/public/images/blog-article.png",
+          imageUrl: "/images/blog-article.png",
         }}
       >
         <Field
@@ -240,7 +240,7 @@ function NewsletterForm() {
           info={{
             description:
               "Each article card appears in the articles grid with an image, category, title, description, and link.",
-            imageUrl: `/public/images/articles.png`,
+            imageUrl: `/images/articles.png`,
           }}
         >
           <Field
@@ -277,7 +277,7 @@ function NewsletterForm() {
         info={{
           description:
             "Side lines is a compact featured block with a title and link, often used for secondary highlights.",
-          imageUrl: "/public/images/sidelines.png",
+          imageUrl: "/images/sidelines.png",
         }}
       >
         <Field
@@ -297,7 +297,7 @@ function NewsletterForm() {
         info={{
           description:
             "What's next is the closing section that teases upcoming content with a title and short description.",
-          imageUrl: "/public/images/whats-next.png",
+          imageUrl: "/images/whats-next.png",
         }}
       >
         <Field
