@@ -6,7 +6,6 @@ import {
   hasPopulatedData,
   useNewsLetterStore,
 } from "./stores/newsLetterStore";
-import "./App.css";
 
 function App() {
   const data = useNewsLetterStore((state) => state.data);
@@ -111,9 +110,11 @@ function App() {
               </button>
             </div>
             <div className="preview-modal-body">
-              <div
-                className="email-preview"
-                dangerouslySetInnerHTML={{ __html: html }}
+              <iframe
+                className="email-preview-frame"
+                title="Email preview"
+                srcDoc={html}
+                sandbox=""
               />
             </div>
           </div>
