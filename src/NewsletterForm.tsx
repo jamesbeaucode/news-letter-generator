@@ -1,4 +1,10 @@
+import { InfoIcon } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useNewsLetterStore } from "./stores/newsLetterStore";
@@ -31,16 +37,57 @@ function Field({ label, value, onChange, multiline }: FieldProps) {
   );
 }
 
+type SectionInfo = {
+  description: string;
+  imageUrl: string;
+};
+
 type SectionProps = {
   title: string;
+  info: SectionInfo;
   children: React.ReactNode;
 };
 
-function FormSection({ title, children }: SectionProps) {
+function SectionInfoTrigger({
+  title,
+  info,
+}: {
+  title: string;
+  info: SectionInfo;
+}) {
+  return (
+    <HoverCard openDelay={200} closeDelay={100}>
+      <HoverCardTrigger asChild>
+        <button
+          type="button"
+          className="inline-flex size-5 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label={`More info about ${title}`}
+        >
+          <InfoIcon className="size-4" weight="bold" />
+        </button>
+      </HoverCardTrigger>
+      <HoverCardContent align="start" className="w-72 p-3">
+        <p className="mb-2.5 text-sm leading-relaxed text-popover-foreground">
+          {info.description}
+        </p>
+        <img
+          src={info.imageUrl}
+          alt={`${title} section preview`}
+          className="aspect-video w-full rounded-sm object-cover"
+        />
+      </HoverCardContent>
+    </HoverCard>
+  );
+}
+
+function FormSection({ title, info, children }: SectionProps) {
   return (
     <fieldset className="mb-4 rounded-lg border border-border bg-background px-5 py-4">
       <legend className="px-1.5 text-lg font-medium text-foreground">
-        {title}
+        <span className="inline-flex items-center gap-1.5">
+          {title}
+          <SectionInfoTrigger title={title} info={info} />
+        </span>
       </legend>
       <div className="flex flex-col gap-3">{children}</div>
     </fieldset>
@@ -60,7 +107,14 @@ function NewsletterForm() {
       className="mx-auto max-w-2xl text-left"
       onSubmit={(e) => e.preventDefault()}
     >
-      <FormSection title="Hero">
+      <FormSection
+        title="Hero"
+        info={{
+          description:
+            "The hero is the top banner of the newsletter with a full-width image, headline, and subtitle.",
+          imageUrl: "/public/images/hero.png",
+        }}
+      >
         <Field
           label="Hero image URL"
           value={data.heroImage}
@@ -78,7 +132,14 @@ function NewsletterForm() {
         />
       </FormSection>
 
-      <FormSection title="Main article">
+      <FormSection
+        title="Main article"
+        info={{
+          description:
+            "The main article is the primary featured story block shown directly below the hero.",
+          imageUrl: "/public/images/main-desc.png",
+        }}
+      >
         <Field
           label="Subtitle"
           value={data.mainArticle.subTitle}
@@ -99,7 +160,14 @@ function NewsletterForm() {
         />
       </FormSection>
 
-      <FormSection title="Spotlight">
+      <FormSection
+        title="Spotlight"
+        info={{
+          description:
+            "Spotlight highlights a single featured item with an image, title, description, and link.",
+          imageUrl: "/public/images/spotlight.png",
+        }}
+      >
         <Field
           label="Image URL"
           value={data.spotlight.image}
@@ -123,7 +191,14 @@ function NewsletterForm() {
         />
       </FormSection>
 
-      <FormSection title="Blog">
+      <FormSection
+        title="Blog"
+        info={{
+          description:
+            "The blog section features a main post with image and a smaller sub-blog teaser below it.",
+          imageUrl: "/public/images/blog-article.png",
+        }}
+      >
         <Field
           label="Title"
           value={data.blog.title}
@@ -159,7 +234,15 @@ function NewsletterForm() {
       </FormSection>
 
       {data.articles.map((article, index) => (
-        <FormSection key={index} title={`Article ${index + 1}`}>
+        <FormSection
+          key={index}
+          title={`Article ${index + 1}`}
+          info={{
+            description:
+              "Each article card appears in the articles grid with an image, category, title, description, and link.",
+            imageUrl: `/public/images/articles.png`,
+          }}
+        >
           <Field
             label="Image URL"
             value={article.image}
@@ -189,7 +272,14 @@ function NewsletterForm() {
         </FormSection>
       ))}
 
-      <FormSection title="Side lines">
+      <FormSection
+        title="Side lines"
+        info={{
+          description:
+            "Side lines is a compact featured block with a title and link, often used for secondary highlights.",
+          imageUrl: "/public/images/sidelines.png",
+        }}
+      >
         <Field
           label="Title"
           value={data.sideLines.title}
@@ -202,7 +292,14 @@ function NewsletterForm() {
         />
       </FormSection>
 
-      <FormSection title="What's next">
+      <FormSection
+        title="What's next"
+        info={{
+          description:
+            "What's next is the closing section that teases upcoming content with a title and short description.",
+          imageUrl: "/public/images/whats-next.png",
+        }}
+      >
         <Field
           label="Title"
           value={data.whatNext.title}
