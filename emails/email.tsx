@@ -22,6 +22,7 @@ import {
   sampleData,
   type NewsletterFormData,
 } from "../src/stores/newsLetterStore";
+import { CiFacebook, CiInstagram, CiYoutube } from "react-icons/ci";
 
 // ── Brand tokens ──────────────────────────────────────────────────────────────
 const c = {
@@ -40,7 +41,8 @@ const font = "'Helvetica Neue', Helvetica, Arial, sans-serif";
 const LOGO =
   "https://www.image2url.com/r2/default/images/1780923702289-7a0fc625-dbde-4960-a99e-eb3f7dfe6f2e.png";
 
-const val = (value: string | null | undefined, fallback = "") => value ?? fallback;
+const val = (value: string | null | undefined, fallback = "") =>
+  value ?? fallback;
 const link = (value: string | null | undefined) => val(value, "#");
 
 const articleColumnStyles = [
@@ -58,7 +60,36 @@ type EmailProps = {
   data?: NewsletterFormData;
 };
 
-// ── Eyebrow label (replaces CSS ::before line with a unicode dash) ─────────────
+// ── Shared components ─────────────────────────────────────────────────────────
+const SOCIAL_ICON_SIZE = 30;
+const socialIconColor = "#ffffff";
+
+function SocialLink({
+  href,
+  Icon,
+  last = false,
+}: {
+  href: string;
+  Icon: React.ComponentType<{ size?: number; color?: string }>;
+  last?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      style={{
+        display: "inline-block",
+        textDecoration: "none",
+        marginRight: last ? 0 : 10,
+        verticalAlign: "middle",
+        fontSize: 0,
+      }}
+    >
+      <Icon size={SOCIAL_ICON_SIZE} color={socialIconColor} />
+    </Link>
+  );
+}
+
+// Eyebrow label (replaces CSS ::before line with a unicode dash)
 function Eyebrow({
   children,
   light = false,
@@ -694,71 +725,22 @@ export default function Email({ data = sampleData }: EmailProps) {
               </Column>
             </Row>
 
-            {/* Social links (text-based; SVG icons are unreliable across email clients) */}
+            {/* Social links */}
             <Row>
               <Column style={{ textAlign: "center", paddingBottom: 24 }}>
-                <Link
+                <SocialLink
                   href="https://www.youtube.com/@AscendSportsCoaching"
-                  style={{
-                    display: "inline-block",
-                    color: "#fff",
-                    fontFamily: font,
-                    fontSize: 12,
-                    fontWeight: 700,
-                    letterSpacing: "0.08em",
-                    textDecoration: "none",
-                    border: "1.5px solid rgba(255,255,255,0.3)",
-                    borderRadius: "50%",
-                    width: 38,
-                    height: 38,
-                    lineHeight: "38px",
-                    textAlign: "center",
-                    marginRight: 10,
-                  }}
-                >
-                  YT
-                </Link>
-                <Link
+                  Icon={CiYoutube}
+                />
+                <SocialLink
                   href="https://instagram.com/ascendcoachingapp"
-                  style={{
-                    display: "inline-block",
-                    color: "#fff",
-                    fontFamily: font,
-                    fontSize: 12,
-                    fontWeight: 700,
-                    letterSpacing: "0.08em",
-                    textDecoration: "none",
-                    border: "1.5px solid rgba(255,255,255,0.3)",
-                    borderRadius: "50%",
-                    width: 38,
-                    height: 38,
-                    lineHeight: "38px",
-                    textAlign: "center",
-                    marginRight: 10,
-                  }}
-                >
-                  IG
-                </Link>
-                <Link
+                  Icon={CiInstagram}
+                />
+                <SocialLink
                   href="https://www.facebook.com/people/Ascend-Coaching-App/61575932845041/"
-                  style={{
-                    display: "inline-block",
-                    color: "#fff",
-                    fontFamily: font,
-                    fontSize: 12,
-                    fontWeight: 700,
-                    letterSpacing: "0.08em",
-                    textDecoration: "none",
-                    border: "1.5px solid rgba(255,255,255,0.3)",
-                    borderRadius: "50%",
-                    width: 38,
-                    height: 38,
-                    lineHeight: "38px",
-                    textAlign: "center",
-                  }}
-                >
-                  FB
-                </Link>
+                  Icon={CiFacebook}
+                  last
+                />
               </Column>
             </Row>
 
@@ -823,7 +805,7 @@ export default function Email({ data = sampleData }: EmailProps) {
                   Ascend app.
                   <br />
                   <Link
-                    href="#"
+                    href="{% unsubscribe_link %}"
                     style={{
                       color: "rgba(255,255,255,0.75)",
                       textDecoration: "underline",
