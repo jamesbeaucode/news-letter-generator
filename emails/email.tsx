@@ -568,7 +568,7 @@ export default function Email({ data = sampleData }: EmailProps) {
             <Row>
               <Column>
                 <Img
-                  src={val(content.heroImage)}
+                  src={val(content.sideLines.image)}
                   width="100%"
                   alt={val(content.sideLines.title, "Featured image")}
                   style={{

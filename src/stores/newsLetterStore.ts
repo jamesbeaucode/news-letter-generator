@@ -65,6 +65,8 @@ export const sampleData = {
   sideLines: {
     title: "The World Cup Effect Is Already Starting",
     link: "https://www.google.com",
+    image:
+      "https://www.image2url.com/r2/default/images/1780923775090-f602832e-acec-4145-af18-d6bcf3b44649.webp",
   },
   whatNext: {
     title:
@@ -108,6 +110,7 @@ export type NewsletterFormData = {
   sideLines: {
     title: string | null;
     link: string | null;
+    image: string | null;
   };
   whatNext: {
     title: string | null;
@@ -137,7 +140,7 @@ export const createEmptyData = (): NewsletterFormData => ({
     subBlog: { title: null, description: null },
   },
   articles: [emptyArticle(), emptyArticle(), emptyArticle()],
-  sideLines: { title: null, link: null },
+  sideLines: { title: null, link: null, image: null },
   whatNext: { title: null, description: null },
 });
 

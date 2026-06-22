@@ -276,10 +276,15 @@ function NewsletterForm() {
         title="Side lines"
         info={{
           description:
-            "Side lines is a compact featured block with a title and link, often used for secondary highlights.",
+            "From the Sidelines is a full-width image block with a dark caption band, title, and link.",
           imageUrl: "/images/sidelines.png",
         }}
       >
+        <Field
+          label="Image URL"
+          value={data.sideLines.image}
+          onChange={(value) => updateNested("sideLines", "image", value)}
+        />
         <Field
           label="Title"
           value={data.sideLines.title}
