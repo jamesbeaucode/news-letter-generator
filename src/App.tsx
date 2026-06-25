@@ -1,13 +1,17 @@
 import Email from "../emails/email";
 import { render } from "react-email";
 import { useEffect, useState } from "react";
+import { Monitor, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import NewsletterForm from "./NewsletterForm";
 import {
   hasPopulatedData,
   useNewsLetterStore,
 } from "./stores/newsLetterStore";
+
+type PreviewMode = "desktop" | "mobile";
 
 function App() {
   const data = useNewsLetterStore((state) => state.data);
@@ -15,6 +19,7 @@ function App() {
   const canGenerate = hasPopulatedData(data);
   const [html, setHtml] = useState("");
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewMode, setPreviewMode] = useState<PreviewMode>("desktop");
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">(
     "idle",
   );
@@ -32,7 +37,10 @@ function App() {
     setIsPreviewOpen(false);
   };
 
-  const closePreview = () => setIsPreviewOpen(false);
+  const closePreview = () => {
+    setIsPreviewOpen(false);
+    setPreviewMode("desktop");
+  };
 
   useEffect(() => {
     if (!isPreviewOpen) return;
@@ -116,17 +124,58 @@ function App() {
               <h2 id="preview-modal-title" className="text-xl font-medium">
                 Email Preview
               </h2>
-              <Button type="button" variant="outline" onClick={closePreview}>
-                Close
-              </Button>
+              <div className="flex items-center gap-2">
+                <div
+                  className="flex items-center rounded-none border border-border bg-background p-0.5"
+                  role="group"
+                  aria-label="Preview device"
+                >
+                  <Button
+                    type="button"
+                    variant={previewMode === "desktop" ? "default" : "ghost"}
+                    size="icon-sm"
+                    aria-pressed={previewMode === "desktop"}
+                    aria-label="Desktop preview"
+                    onClick={() => setPreviewMode("desktop")}
+                  >
+                    <Monitor />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={previewMode === "mobile" ? "default" : "ghost"}
+                    size="icon-sm"
+                    aria-pressed={previewMode === "mobile"}
+                    aria-label="Mobile preview"
+                    onClick={() => setPreviewMode("mobile")}
+                  >
+                    <Smartphone />
+                  </Button>
+                </div>
+                <Button type="button" variant="outline" onClick={closePreview}>
+                  Close
+                </Button>
+              </div>
             </div>
-            <div className="min-h-0 flex-1 overflow-hidden">
-              <iframe
-                className="block size-full min-h-[500px] border-0"
-                title="Email preview"
-                srcDoc={html}
-                sandbox=""
-              />
+            <div
+              className={cn(
+                "min-h-0 flex-1 overflow-auto bg-muted/40",
+                previewMode === "mobile" && "flex justify-center px-4 py-6",
+              )}
+            >
+              <div
+                className={cn(
+                  "h-full min-h-[500px] overflow-hidden bg-background",
+                  previewMode === "mobile" &&
+                    "w-full max-w-[390px] shrink-0 border border-border shadow-sm",
+                )}
+              >
+                <iframe
+                  className="block size-full min-h-[500px] border-0"
+                  title={`Email preview (${previewMode})`}
+                  srcDoc={html}
+                  sandbox=""
+                />
+              </div>
             </div>
           </div>
         </div>
