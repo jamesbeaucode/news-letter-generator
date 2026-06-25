@@ -546,14 +546,7 @@ export default function Email({ data = sampleData }: EmailProps) {
                     margin: 0,
                   }}
                 >
-                  {val(content.blog.subBlog.title)
-                    .split(" ")
-                    .map((word, index) => (
-                      <React.Fragment key={index}>
-                        {index > 0 && <br />}
-                        {word}
-                      </React.Fragment>
-                    ))}
+                  {val(content.blog.subBlog.title)}
                 </Heading>
               </Column>
               {/* Text + ghost CTA */}
