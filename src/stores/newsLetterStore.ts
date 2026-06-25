@@ -190,6 +190,7 @@ type NewsLetterStore = {
     value: string,
   ) => void;
   loadSampleData: () => void;
+  setData: (data: NewsletterFormData) => void;
   clearData: () => void;
 };
 
@@ -229,6 +230,8 @@ export const useNewsLetterStore = create<NewsLetterStore>((set) => ({
     })),
 
   loadSampleData: () => set({ data: sampleData }),
+
+  setData: (data) => set({ data }),
 
   clearData: () => set({ data: createEmptyData() }),
 }));

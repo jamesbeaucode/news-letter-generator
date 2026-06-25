@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { Id } from "../convex/_generated/dataModel";
 import { AppSidebar, type AppPage } from "@/components/app-sidebar";
 import {
   SidebarInset,
@@ -17,13 +18,27 @@ import { TemplatesPage } from "@/pages/templates-page";
 type Route =
   | { page: "newsletter" }
   | { page: "templates" }
-  | { page: "create-newsletter"; templateId: string };
+  | {
+      page: "create-newsletter";
+      templateId: string;
+      newsletterId?: Id<"newsletters">;
+    };
 
-const pageTitles: Record<Route["page"], string> = {
-  newsletter: "Newsletter",
-  templates: "Templates",
-  "create-newsletter": "Create Newsletter",
-};
+function getPageTitle(route: Route) {
+  if (route.page === "create-newsletter" && route.newsletterId) {
+    return "Edit Newsletter";
+  }
+
+  if (route.page === "create-newsletter") {
+    return "Create Newsletter";
+  }
+
+  if (route.page === "templates") {
+    return "Templates";
+  }
+
+  return "Newsletter";
+}
 
 function App() {
   const [route, setRoute] = useState<Route>({ page: "newsletter" });
@@ -33,6 +48,15 @@ function App() {
   ) => {
     resetCreateNewsletterForm();
     setRoute({ page: "create-newsletter", templateId });
+  };
+
+  const openEditNewsletter = (newsletterId: Id<"newsletters">) => {
+    resetCreateNewsletterForm();
+    setRoute({
+      page: "create-newsletter",
+      templateId: DEFAULT_EMAIL_TEMPLATE_ID,
+      newsletterId,
+    });
   };
 
   const sidebarPage: AppPage =
@@ -49,12 +73,15 @@ function App() {
         <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-4">
           <SidebarTrigger />
           <Separator orientation="vertical" className="mr-2 h-4" />
-          <h1 className="text-sm font-medium">{pageTitles[route.page]}</h1>
+          <h1 className="text-sm font-medium">{getPageTitle(route)}</h1>
         </header>
 
         <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
           {route.page === "newsletter" && (
-            <NewsletterPage onCreateNewsletter={() => openCreateNewsletter()} />
+            <NewsletterPage
+              onCreateNewsletter={() => openCreateNewsletter()}
+              onEditNewsletter={openEditNewsletter}
+            />
           )}
           {route.page === "templates" && (
             <TemplatesPage onCreateNewsletter={openCreateNewsletter} />
@@ -62,8 +89,13 @@ function App() {
           {route.page === "create-newsletter" && (
             <CreateNewsletterPage
               templateId={route.templateId}
-              onCreated={() => setRoute({ page: "newsletter" })}
-              onCancel={() => setRoute({ page: "templates" })}
+              newsletterId={route.newsletterId}
+              onSaved={() => setRoute({ page: "newsletter" })}
+              onCancel={() =>
+                setRoute({
+                  page: route.newsletterId ? "newsletter" : "templates",
+                })
+              }
             />
           )}
         </div>

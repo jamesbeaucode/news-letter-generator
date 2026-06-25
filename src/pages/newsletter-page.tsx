@@ -1,24 +1,30 @@
+import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
 import { PlusIcon } from "@phosphor-icons/react";
+import { api } from "../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { EmailPreviewModal } from "@/components/email-preview-modal";
 import { NewsletterCard } from "@/components/newsletter-card";
-import {
-  useNewslettersStore,
-  type SavedNewsletter,
-} from "@/stores/newslettersStore";
+import type { SavedNewsletter } from "@/stores/newslettersStore";
 
 type NewsletterPageProps = {
   onCreateNewsletter: () => void;
+  onEditNewsletter: (newsletterId: SavedNewsletter["_id"]) => void;
 };
 
-export function NewsletterPage({ onCreateNewsletter }: NewsletterPageProps) {
-  const newsletters = useNewslettersStore((state) => state.newsletters);
-  const removeNewsletter = useNewslettersStore((state) => state.removeNewsletter);
+export function NewsletterPage({
+  onCreateNewsletter,
+  onEditNewsletter,
+}: NewsletterPageProps) {
+  const newsletters = useQuery(api.newsletters.list);
+  const removeNewsletter = useMutation(api.newsletters.remove);
 
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
   const [previewTitle, setPreviewTitle] = useState("Email Preview");
   const [copyStatus, setCopyStatus] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<SavedNewsletter["_id"] | null>(
+    null,
+  );
 
   const openPreview = (newsletter: SavedNewsletter) => {
     setPreviewTitle(newsletter.title);
@@ -35,6 +41,19 @@ export function NewsletterPage({ onCreateNewsletter }: NewsletterPageProps) {
       setTimeout(() => setCopyStatus(null), 2000);
     }
   };
+
+  const handleDelete = async (newsletter: SavedNewsletter) => {
+    if (deletingId) return;
+
+    setDeletingId(newsletter._id);
+    try {
+      await removeNewsletter({ id: newsletter._id });
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const isLoading = newsletters === undefined;
 
   return (
     <>
@@ -57,7 +76,11 @@ export function NewsletterPage({ onCreateNewsletter }: NewsletterPageProps) {
           </div>
         </div>
 
-        {newsletters.length === 0 ? (
+        {isLoading ? (
+          <div className="flex min-h-[320px] flex-1 items-center justify-center rounded-xl border border-border bg-muted/30 px-6 py-16">
+            <p className="text-sm text-muted-foreground">Loading newsletters...</p>
+          </div>
+        ) : newsletters.length === 0 ? (
           <div className="flex min-h-[320px] flex-1 flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 px-6 py-16 text-center">
             <p className="mb-4 text-sm text-muted-foreground">
               No newsletters yet. Create your first one to get started.
@@ -71,13 +94,15 @@ export function NewsletterPage({ onCreateNewsletter }: NewsletterPageProps) {
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {newsletters.map((newsletter) => (
               <NewsletterCard
-                key={newsletter.id}
+                key={newsletter._id}
                 newsletter={newsletter}
+                isDeleting={deletingId === newsletter._id}
                 onPreview={() => openPreview(newsletter)}
+                onEdit={() => onEditNewsletter(newsletter._id)}
                 onCopy={() =>
                   copyHtml(newsletter.html, `Copied ${newsletter.title}`)
                 }
-                onDelete={() => removeNewsletter(newsletter.id)}
+                onDelete={() => handleDelete(newsletter)}
               />
             ))}
           </div>

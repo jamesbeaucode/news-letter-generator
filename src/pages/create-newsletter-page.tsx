@@ -1,5 +1,8 @@
 import { render } from "react-email";
-import { useState } from "react";
+import { useMutation, useQuery } from "convex/react";
+import { useEffect, useRef, useState } from "react";
+import { api } from "../../convex/_generated/api";
+import type { Id } from "../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import NewsletterForm from "@/NewsletterForm";
 import { EmailPreviewModal } from "@/components/email-preview-modal";
@@ -9,52 +12,96 @@ import {
   hasPopulatedData,
   useNewsLetterStore,
 } from "@/stores/newsLetterStore";
-import { useNewslettersStore } from "@/stores/newslettersStore";
 
 type CreateNewsletterPageProps = {
   templateId: string;
-  onCreated: () => void;
+  newsletterId?: Id<"newsletters">;
+  onSaved: () => void;
   onCancel: () => void;
 };
 
+function getNewsletterTitle(
+  data: ReturnType<typeof useNewsLetterStore.getState>["data"],
+) {
+  return (
+    data.heroTitle?.trim() ||
+    data.mainArticle.title?.trim() ||
+    "Untitled Newsletter"
+  );
+}
+
 export function CreateNewsletterPage({
   templateId,
-  onCreated,
+  newsletterId,
+  onSaved,
   onCancel,
 }: CreateNewsletterPageProps) {
-  const template = getEmailTemplateOrDefault(templateId);
+  const isEditing = Boolean(newsletterId);
+  const existingNewsletter = useQuery(
+    api.newsletters.get,
+    newsletterId ? { id: newsletterId } : "skip",
+  );
+  const createNewsletter = useMutation(api.newsletters.create);
+  const updateNewsletter = useMutation(api.newsletters.update);
+
+  const resolvedTemplateId =
+    isEditing && existingNewsletter
+      ? existingNewsletter.templateId
+      : templateId;
+  const template = getEmailTemplateOrDefault(resolvedTemplateId);
   const TemplateComponent = template.component;
 
   const data = useNewsLetterStore((state) => state.data);
+  const setData = useNewsLetterStore((state) => state.setData);
   const clearData = useNewsLetterStore((state) => state.clearData);
-  const addNewsletter = useNewslettersStore((state) => state.addNewsletter);
 
-  const canCreate = hasPopulatedData(data);
-  const [isCreating, setIsCreating] = useState(false);
+  const canSave = hasPopulatedData(data);
+  const [isSaving, setIsSaving] = useState(false);
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const loadedNewsletterIdRef = useRef<Id<"newsletters"> | null>(null);
 
-  const createNewsletter = async () => {
-    if (!canCreate || isCreating) return;
+  useEffect(() => {
+    if (!newsletterId) {
+      loadedNewsletterIdRef.current = null;
+      return;
+    }
+    if (!existingNewsletter) return;
+    if (loadedNewsletterIdRef.current === newsletterId) return;
 
-    setIsCreating(true);
+    loadedNewsletterIdRef.current = newsletterId;
+    setData(structuredClone(existingNewsletter.data));
+  }, [existingNewsletter, newsletterId, setData]);
+
+  const saveNewsletter = async () => {
+    if (!canSave || isSaving) return;
+
+    setIsSaving(true);
+    setSaveError(null);
     try {
       const currentData = useNewsLetterStore.getState().data;
       const html = await render(<TemplateComponent data={currentData} />);
-      const title =
-        currentData.heroTitle?.trim() ||
-        currentData.mainArticle.title?.trim() ||
-        "Untitled Newsletter";
-
-      addNewsletter({
-        title,
+      const payload = {
+        title: getNewsletterTitle(currentData),
         html,
         data: currentData,
-        templateId: template.id,
-      });
+        templateId: template.id as "ascend-newsletter" | "template-two",
+      };
+
+      if (newsletterId) {
+        await updateNewsletter({ id: newsletterId, newsletter: payload });
+      } else {
+        await createNewsletter({ newsletter: payload });
+      }
+
       clearData();
-      onCreated();
+      onSaved();
+    } catch (error) {
+      setSaveError(
+        error instanceof Error ? error.message : "Failed to save newsletter",
+      );
     } finally {
-      setIsCreating(false);
+      setIsSaving(false);
     }
   };
 
@@ -68,18 +115,42 @@ export function CreateNewsletterPage({
     clearData();
   };
 
+  if (isEditing && existingNewsletter === undefined) {
+    return (
+      <div className="flex flex-1 items-center justify-center p-4">
+        <p className="text-sm text-muted-foreground">Loading newsletter...</p>
+      </div>
+    );
+  }
+
+  if (isEditing && existingNewsletter === null) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-4 p-4">
+        <p className="text-sm text-muted-foreground">Newsletter not found.</p>
+        <Button type="button" variant="outline" onClick={onCancel}>
+          Back to newsletters
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="flex flex-1 flex-col overflow-hidden p-4">
         <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
           <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
             <div>
-              <h2 className="text-base font-medium">Create newsletter</h2>
+              <h2 className="text-base font-medium">
+                {isEditing ? "Edit newsletter" : "Create newsletter"}
+              </h2>
               <p className="text-xs text-muted-foreground">
                 Using {template.name} ({template.source})
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
+              {saveError && (
+                <span className="text-xs text-destructive">{saveError}</span>
+              )}
               <Button type="button" variant="outline" onClick={onCancel}>
                 Cancel
               </Button>
@@ -87,7 +158,7 @@ export function CreateNewsletterPage({
                 type="button"
                 variant="outline"
                 onClick={previewNewsletter}
-                disabled={!canCreate}
+                disabled={!canSave}
               >
                 Preview
               </Button>
@@ -96,10 +167,14 @@ export function CreateNewsletterPage({
               </Button>
               <Button
                 type="button"
-                onClick={createNewsletter}
-                disabled={!canCreate || isCreating}
+                onClick={saveNewsletter}
+                disabled={!canSave || isSaving}
               >
-                {isCreating ? "Creating..." : "Create Newsletter"}
+                {isSaving
+                  ? "Saving..."
+                  : isEditing
+                    ? "Save Newsletter"
+                    : "Create Newsletter"}
               </Button>
             </div>
           </div>
@@ -122,4 +197,10 @@ export function CreateNewsletterPage({
 
 export function resetCreateNewsletterForm() {
   useNewsLetterStore.setState({ data: createEmptyData() });
+}
+
+export function loadNewsletterForEdit(
+  data: ReturnType<typeof useNewsLetterStore.getState>["data"],
+) {
+  useNewsLetterStore.setState({ data: structuredClone(data) });
 }

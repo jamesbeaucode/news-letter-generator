@@ -8,13 +8,19 @@
  * @module
  */
 
+import type * as lib_newsletterValidators from "../lib/newsletterValidators.js";
+import type * as newsletters from "../newsletters.js";
+
 import type {
   ApiFromModules,
   FilterApi,
   FunctionReference,
 } from "convex/server";
 
-declare const fullApi: ApiFromModules<{}>;
+declare const fullApi: ApiFromModules<{
+  "lib/newsletterValidators": typeof lib_newsletterValidators;
+  newsletters: typeof newsletters;
+}>;
 
 /**
  * A utility for referencing Convex functions in your app's public API.

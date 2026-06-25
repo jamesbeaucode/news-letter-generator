@@ -1,4 +1,4 @@
-import { CopyIcon, EyeIcon, TrashIcon } from "@phosphor-icons/react";
+import { CopyIcon, EyeIcon, PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { getEmailTemplateOrDefault } from "@/lib/email-templates";
 import type { SavedNewsletter } from "@/stores/newslettersStore";
@@ -12,18 +12,24 @@ function formatDate(timestamp: number) {
 
 type NewsletterCardProps = {
   newsletter: SavedNewsletter;
+  isDeleting?: boolean;
   onPreview: () => void;
+  onEdit: () => void;
   onCopy: () => void;
   onDelete: () => void;
 };
 
 export function NewsletterCard({
   newsletter,
+  isDeleting = false,
   onPreview,
+  onEdit,
   onCopy,
   onDelete,
 }: NewsletterCardProps) {
   const template = getEmailTemplateOrDefault(newsletter.templateId);
+  const updatedAt = newsletter.updatedAt ?? newsletter.createdAt;
+  const wasUpdated = updatedAt > newsletter.createdAt;
 
   return (
     <article className="flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
@@ -37,7 +43,8 @@ export function NewsletterCard({
         <div>
           <h3 className="truncate font-medium">{newsletter.title}</h3>
           <p className="mt-1 text-xs text-muted-foreground">
-            Created {formatDate(newsletter.createdAt)}
+            {wasUpdated ? "Updated" : "Created"}{" "}
+            {formatDate(wasUpdated ? updatedAt : newsletter.createdAt)}
           </p>
         </div>
 
@@ -45,6 +52,10 @@ export function NewsletterCard({
           <Button type="button" size="sm" onClick={onPreview}>
             <EyeIcon />
             Preview
+          </Button>
+          <Button type="button" size="sm" variant="outline" onClick={onEdit}>
+            <PencilSimpleIcon />
+            Edit
           </Button>
           <Button type="button" size="sm" variant="outline" onClick={onCopy}>
             <CopyIcon />
@@ -55,9 +66,10 @@ export function NewsletterCard({
             size="sm"
             variant="destructive"
             onClick={onDelete}
+            disabled={isDeleting}
           >
             <TrashIcon />
-            Delete
+            {isDeleting ? "Deleting..." : "Delete"}
           </Button>
         </div>
       </div>
