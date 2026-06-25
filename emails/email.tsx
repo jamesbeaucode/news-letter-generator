@@ -168,13 +168,28 @@ export default function Email({ data = sampleData }: EmailProps) {
             .blog-text-col { padding-left: 0 !important; padding-top: 20px !important; }
 
             /* More from the field — stack */
-            .more-heading-col,
+            .more-heading-col {
+              display: block !important;
+              width: 100% !important;
+              max-width: 100% !important;
+              min-width: 100% !important;
+              box-sizing: border-box !important;
+            }
             .more-text-col {
               display: block !important;
               width: 100% !important;
+              max-width: 100% !important;
+              min-width: 100% !important;
+              padding-left: 0 !important;
+              padding-top: 20px !important;
+              box-sizing: border-box !important;
             }
-            .more-heading-col h2 { font-size: 32px !important; margin-bottom: 20px !important; }
-            .more-text-col { padding-left: 0 !important; padding-top: 0 !important; }
+            .more-field-h {
+              font-size: 32px !important;
+              margin-bottom: 20px !important;
+              width: 100% !important;
+              max-width: 100% !important;
+            }
 
             /* Article cards — single column */
             .article-col {
@@ -520,6 +535,7 @@ export default function Email({ data = sampleData }: EmailProps) {
               >
                 <Heading
                   as="h2"
+                  className="more-field-h"
                   style={{
                     fontFamily: font,
                     fontWeight: 800,
