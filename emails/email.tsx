@@ -130,7 +130,75 @@ export default function Email({ data = sampleData }: EmailProps) {
 
   return (
     <Html lang="en">
-      <Head />
+      <Head>
+        <style>{`
+          @media only screen and (max-width: 600px) {
+            /* Container */
+            .email-container {
+              margin: 0 !important;
+              width: 100% !important;
+              max-width: 100% !important;
+            }
+
+            /* Sections — reduce horizontal padding */
+            .pad-h { padding-left: 24px !important; padding-right: 24px !important; }
+            .pad-h-sm { padding-left: 16px !important; padding-right: 16px !important; }
+
+            /* Hero */
+            .hero-nav { padding: 20px 24px 0 !important; }
+            .hero-title-block { padding: 36px 24px 28px !important; }
+            .hero-h1 { font-size: 32px !important; line-height: 1.1 !important; }
+
+            /* Spotlight — stack image above text */
+            .spotlight-img-col,
+            .spotlight-text-col {
+              display: block !important;
+              width: 100% !important;
+            }
+            .spotlight-img-col img { height: 220px !important; }
+            .spotlight-text-col { padding-left: 0 !important; padding-top: 24px !important; }
+
+            /* Blog band — stack image above text */
+            .blog-img-col,
+            .blog-text-col {
+              display: block !important;
+              width: 100% !important;
+            }
+            .blog-img-col img { height: 200px !important; }
+            .blog-text-col { padding-left: 0 !important; padding-top: 20px !important; }
+
+            /* More from the field — stack */
+            .more-heading-col,
+            .more-text-col {
+              display: block !important;
+              width: 100% !important;
+            }
+            .more-heading-col h2 { font-size: 32px !important; margin-bottom: 20px !important; }
+            .more-text-col { padding-left: 0 !important; padding-top: 0 !important; }
+
+            /* Article cards — single column */
+            .article-col {
+              display: block !important;
+              width: 100% !important;
+              padding-left: 0 !important;
+              padding-right: 0 !important;
+              padding-bottom: 36px !important;
+            }
+            .article-col img { height: 200px !important; }
+
+            /* Footer buttons — stack */
+            .footer-btn-wrap { display: block !important; }
+            .footer-btn-primary { display: block !important; margin-right: 0 !important; margin-bottom: 12px !important; }
+            .footer-btn-ghost { display: block !important; }
+
+            /* Feature band heading */
+            .blog-heading { font-size: 28px !important; }
+
+            /* What's next heading */
+            .whats-next-h { font-size: 22px !important; }
+          }
+        `}</style>
+      </Head>
       <Preview>
         {val(content.heroTitle, "Ascend Coaching — The Newsletter, Issue 01")}
       </Preview>
@@ -144,6 +212,7 @@ export default function Email({ data = sampleData }: EmailProps) {
         }}
       >
         <Container
+          className="email-container"
           style={{
             maxWidth: 700,
             margin: "32px auto",
@@ -167,6 +236,7 @@ export default function Email({ data = sampleData }: EmailProps) {
                   width="100%"
                   cellPadding={0}
                   cellSpacing={0}
+                  className="hero-nav"
                   style={{ padding: "30px 44px 0" }}
                 >
                   <tbody>
@@ -188,6 +258,7 @@ export default function Email({ data = sampleData }: EmailProps) {
                   width="100%"
                   cellPadding={0}
                   cellSpacing={0}
+                  className="hero-title-block"
                   style={{ padding: "64px 44px 44px" }}
                 >
                   <tbody>
@@ -218,6 +289,7 @@ export default function Email({ data = sampleData }: EmailProps) {
                         </Text>
                         <Heading
                           as="h1"
+                          className="hero-h1"
                           style={{
                             fontFamily: font,
                             fontSize: 56,
@@ -240,7 +312,7 @@ export default function Email({ data = sampleData }: EmailProps) {
           </Section>
 
           {/* ── EDITOR INTRO ─────────────────────────────────────────────── */}
-          <Section style={{ padding: "52px 44px 8px" }}>
+          <Section className="pad-h" style={{ padding: "52px 44px 8px" }}>
             <Row>
               <Column style={{ textAlign: "center" }}>
                 <Text
@@ -288,10 +360,13 @@ export default function Email({ data = sampleData }: EmailProps) {
           </Section>
 
           {/* ── SPOTLIGHT ────────────────────────────────────────────────── */}
-          <Section style={{ padding: "56px 44px 32px" }}>
+          <Section className="pad-h" style={{ padding: "56px 44px 32px" }}>
             <Row>
               {/* Image column */}
-              <Column style={{ width: 240, verticalAlign: "top" }}>
+              <Column
+                className="spotlight-img-col"
+                style={{ width: 240, verticalAlign: "top" }}
+              >
                 <Img
                   src={val(content.spotlight.image)}
                   width={240}
@@ -308,7 +383,10 @@ export default function Email({ data = sampleData }: EmailProps) {
               </Column>
 
               {/* Text column */}
-              <Column style={{ paddingLeft: 36, verticalAlign: "top" }}>
+              <Column
+                className="spotlight-text-col"
+                style={{ paddingLeft: 36, verticalAlign: "top" }}
+              >
                 <Eyebrow>In the Spotlight</Eyebrow>
                 <Heading
                   as="h2"
@@ -360,6 +438,7 @@ export default function Email({ data = sampleData }: EmailProps) {
 
           {/* ── FEATURE BAND ─────────────────────────────────────────────── */}
           <Section
+            className="pad-h"
             style={{ backgroundColor: c.band, padding: "48px 44px 48px" }}
           >
             <Row>
@@ -367,6 +446,7 @@ export default function Email({ data = sampleData }: EmailProps) {
                 <Eyebrow light>On the Blog</Eyebrow>
                 <Heading
                   as="h2"
+                  className="blog-heading"
                   style={{
                     fontFamily: font,
                     fontWeight: 800,
@@ -383,7 +463,10 @@ export default function Email({ data = sampleData }: EmailProps) {
             </Row>
             <Row>
               {/* Feature image */}
-              <Column style={{ width: 240, verticalAlign: "middle" }}>
+              <Column
+                className="blog-img-col"
+                style={{ width: 240, verticalAlign: "middle" }}
+              >
                 <Img
                   src={val(content.blog.image)}
                   width={240}
@@ -399,7 +482,10 @@ export default function Email({ data = sampleData }: EmailProps) {
                 />
               </Column>
               {/* Feature text */}
-              <Column style={{ paddingLeft: 36, verticalAlign: "middle" }}>
+              <Column
+                className="blog-text-col"
+                style={{ paddingLeft: 36, verticalAlign: "middle" }}
+              >
                 <Text
                   style={{
                     fontFamily: font,
@@ -416,7 +502,10 @@ export default function Email({ data = sampleData }: EmailProps) {
           </Section>
 
           {/* ── MORE FROM THE FIELD ──────────────────────────────────────── */}
-          <Section style={{ backgroundColor: c.band, padding: "0 44px 56px" }}>
+          <Section
+            className="pad-h"
+            style={{ backgroundColor: c.band, padding: "0 44px 56px" }}
+          >
             <Hr
               style={{
                 borderColor: "rgba(255,255,255,0.12)",
@@ -425,7 +514,10 @@ export default function Email({ data = sampleData }: EmailProps) {
             />
             <Row>
               {/* Big heading */}
-              <Column style={{ width: 240, verticalAlign: "top" }}>
+              <Column
+                className="more-heading-col"
+                style={{ width: 240, verticalAlign: "top" }}
+              >
                 <Heading
                   as="h2"
                   style={{
@@ -449,7 +541,10 @@ export default function Email({ data = sampleData }: EmailProps) {
                 </Heading>
               </Column>
               {/* Text + ghost CTA */}
-              <Column style={{ paddingLeft: 36, verticalAlign: "top" }}>
+              <Column
+                className="more-text-col"
+                style={{ paddingLeft: 36, verticalAlign: "top" }}
+              >
                 <Text
                   style={{
                     fontFamily: font,
@@ -485,11 +580,12 @@ export default function Email({ data = sampleData }: EmailProps) {
           </Section>
 
           {/* ── ARTICLE CARDS ────────────────────────────────────────────── */}
-          <Section style={{ padding: "56px 44px" }}>
+          <Section className="pad-h" style={{ padding: "56px 44px" }}>
             <Row>
               {content.articles.map((article, index) => (
                 <Column
                   key={index}
+                  className="article-col"
                   style={articleColumnStyles[index] ?? articleColumnStyles[0]}
                 >
                   <Img
@@ -583,6 +679,7 @@ export default function Email({ data = sampleData }: EmailProps) {
             </Row>
             <Row>
               <Column
+                className="pad-h"
                 style={{ backgroundColor: c.band, padding: "28px 44px 32px" }}
               >
                 <Eyebrow light>From the Sidelines</Eyebrow>
@@ -620,7 +717,10 @@ export default function Email({ data = sampleData }: EmailProps) {
           </Section>
 
           {/* ── WHAT'S NEXT ──────────────────────────────────────────────── */}
-          <Section style={{ backgroundColor: c.panel, padding: "52px 44px" }}>
+          <Section
+            className="pad-h"
+            style={{ backgroundColor: c.panel, padding: "52px 44px" }}
+          >
             <Row>
               <Column style={{ textAlign: "center" }}>
                 <Text
@@ -638,6 +738,7 @@ export default function Email({ data = sampleData }: EmailProps) {
                 </Text>
                 <Heading
                   as="h2"
+                  className="whats-next-h"
                   style={{
                     fontFamily: font,
                     fontWeight: 800,
@@ -668,7 +769,10 @@ export default function Email({ data = sampleData }: EmailProps) {
           </Section>
 
           {/* ── FOOTER ───────────────────────────────────────────────────── */}
-          <Section style={{ backgroundColor: c.band, padding: "40px 44px 0" }}>
+          <Section
+            className="pad-h"
+            style={{ backgroundColor: c.band, padding: "40px 44px 0" }}
+          >
             {/* Logo */}
             <Row>
               <Column style={{ textAlign: "center", paddingBottom: 28 }}>
@@ -683,9 +787,13 @@ export default function Email({ data = sampleData }: EmailProps) {
 
             {/* CTA buttons */}
             <Row>
-              <Column style={{ textAlign: "center", paddingBottom: 28 }}>
+              <Column
+                className="footer-btn-wrap"
+                style={{ textAlign: "center", paddingBottom: 28 }}
+              >
                 <Button
                   href="https://ascendapp.ca/#contact"
+                  className="footer-btn-primary"
                   style={{
                     display: "inline-block",
                     backgroundColor: c.red,
@@ -705,6 +813,7 @@ export default function Email({ data = sampleData }: EmailProps) {
                 </Button>
                 <Button
                   href="https://ascendapp.ca/#contact"
+                  className="footer-btn-ghost"
                   style={{
                     display: "inline-block",
                     backgroundColor: "transparent",
