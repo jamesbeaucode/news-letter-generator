@@ -7,11 +7,7 @@ import { Button } from "@/components/ui/button";
 import NewsletterForm from "@/NewsletterForm";
 import { EmailPreviewModal } from "@/components/email-preview-modal";
 import { getEmailTemplateOrDefault } from "@/lib/email-templates";
-import {
-  createEmptyData,
-  hasPopulatedData,
-  useNewsLetterStore,
-} from "@/stores/newsLetterStore";
+import { hasPopulatedData, useNewsLetterStore } from "@/stores/newsLetterStore";
 
 type CreateNewsletterPageProps = {
   templateId: string;
@@ -193,14 +189,4 @@ export function CreateNewsletterPage({
       />
     </>
   );
-}
-
-export function resetCreateNewsletterForm() {
-  useNewsLetterStore.setState({ data: createEmptyData() });
-}
-
-export function loadNewsletterForEdit(
-  data: ReturnType<typeof useNewsLetterStore.getState>["data"],
-) {
-  useNewsLetterStore.setState({ data: structuredClone(data) });
 }

@@ -235,3 +235,11 @@ export const useNewsLetterStore = create<NewsLetterStore>((set) => ({
 
   clearData: () => set({ data: createEmptyData() }),
 }));
+
+export function resetNewsletterForm() {
+  useNewsLetterStore.setState({ data: createEmptyData() });
+}
+
+export function loadNewsletterForEdit(data: NewsletterFormData) {
+  useNewsLetterStore.setState({ data: structuredClone(data) });
+}

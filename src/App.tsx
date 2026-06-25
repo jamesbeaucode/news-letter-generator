@@ -8,10 +8,8 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { DEFAULT_EMAIL_TEMPLATE_ID } from "@/lib/email-templates";
-import {
-  CreateNewsletterPage,
-  resetCreateNewsletterForm,
-} from "@/pages/create-newsletter-page";
+import { CreateNewsletterPage } from "@/pages/create-newsletter-page";
+import { resetNewsletterForm } from "@/stores/newsLetterStore";
 import { NewsletterPage } from "@/pages/newsletter-page";
 import { TemplatesPage } from "@/pages/templates-page";
 
@@ -46,12 +44,12 @@ function App() {
   const openCreateNewsletter = (
     templateId: string = DEFAULT_EMAIL_TEMPLATE_ID,
   ) => {
-    resetCreateNewsletterForm();
+    resetNewsletterForm();
     setRoute({ page: "create-newsletter", templateId });
   };
 
   const openEditNewsletter = (newsletterId: Id<"newsletters">) => {
-    resetCreateNewsletterForm();
+    resetNewsletterForm();
     setRoute({
       page: "create-newsletter",
       templateId: DEFAULT_EMAIL_TEMPLATE_ID,

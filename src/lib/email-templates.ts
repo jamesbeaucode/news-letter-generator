@@ -1,10 +1,6 @@
 import type { ComponentType } from "react";
 import Email from "../../emails/email";
-import TemplateTwo from "../../emails/template-two";
-import {
-  sampleData,
-  type NewsletterFormData,
-} from "@/stores/newsLetterStore";
+import { sampleData, type NewsletterFormData } from "@/stores/newsLetterStore";
 
 export type EmailTemplateDefinition = {
   id: string;
@@ -26,15 +22,6 @@ export const emailTemplates: EmailTemplateDefinition[] = [
     description: "Primary newsletter layout used when creating campaigns.",
     cardColor: "#E63027",
     component: Email,
-    previewData: sampleData,
-  },
-  {
-    id: "template-two",
-    name: "Template Two",
-    source: "emails/template-two.tsx",
-    description: "Alternate newsletter layout for campaigns.",
-    cardColor: "#171717",
-    component: TemplateTwo,
     previewData: sampleData,
   },
 ];
