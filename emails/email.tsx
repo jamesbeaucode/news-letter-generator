@@ -1,5 +1,3 @@
-// re_XMQTCAUK_Q1KA9CEcNvRuaPqrppQoYJFn
-
 import {
   Html,
   Head,
@@ -140,13 +138,18 @@ export default function Email({ data = sampleData }: EmailProps) {
               max-width: 100% !important;
             }
 
-            /* Sections — reduce horizontal padding */
-            .pad-h { padding-left: 24px !important; padding-right: 24px !important; }
-            .pad-h-sm { padding-left: 16px !important; padding-right: 16px !important; }
+            /* Sections — react-email moves padding onto the inner cell */
+            .pad-h > tbody > tr > td,
+            .pad-h > tr > td,
+            .pad-h-sm > tbody > tr > td,
+            .pad-h-sm > tr > td {
+              padding-left: 16px !important;
+              padding-right: 16px !important;
+            }
 
             /* Hero */
-            .hero-nav { padding: 20px 24px 0 !important; }
-            .hero-title-block { padding: 36px 24px 28px !important; }
+            .hero-nav { padding: 20px 16px 0 !important; }
+            .hero-title-block { padding: 36px 16px 28px !important; }
             .hero-h1 { font-size: 32px !important; line-height: 1.1 !important; }
 
             /* Spotlight — stack image above text */
